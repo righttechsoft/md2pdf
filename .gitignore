@@ -205,3 +205,12 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Generated files
+*.pdf
+*.png
+
+# Markdown files (except documentation)
+*.md
+!CLAUDE.md
+!README.md

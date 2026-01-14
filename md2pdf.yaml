@@ -1,0 +1,42 @@
+# md2pdf Configuration File
+# All values are optional - defaults will be used if not specified
+
+# Font settings
+font:
+  family: "Georgia, serif"
+  size: "12pt"
+  line_height: 1.6
+
+# Page margins (CSS length units: cm, mm, in, pt, px)
+margins:
+  top: "4cm"
+  bottom: "1.5cm"
+  left: "1.5cm"
+  right: "1.5cm"
+
+# Page size: A4, Letter, Legal, or CSS size like "8.5in 11in"
+page_size: "A4"
+
+# Header configuration
+header:
+  height: "2cm"
+  content: |
+    <table style="width: 100%; border: none;">
+      <tr>
+        <td style="text-align: left; border: none;"><img src="logo.png" style="height: 1.2cm;" /></td>
+        <td style="text-align: center; font-size: 10pt; color: #666; border: none;">{{title}}</td>
+        <td style="text-align: right; font-size: 9pt; color: #888; border: none;">{{date}}</td>
+      </tr>
+    </table>
+
+# Footer configuration
+footer:
+  height: "1.5cm"
+  content: |
+    <table style="width: 100%; border: none;">
+      <tr>
+        <td style="text-align: left; font-size: 8pt; color: #999; border: none;">{{filename}}</td>
+        <td style="text-align: center; font-size: 9pt; color: #666; border: none;">Page <span class="page-number"></span> of <span class="page-count"></span></td>
+        <td style="text-align: right; border: none;"><img src="logo.png" style="height: 0.8cm;" /></td>
+      </tr>
+    </table>
