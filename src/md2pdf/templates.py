@@ -38,12 +38,22 @@ def build_html_document(
         footer_template = env.from_string(footer_content)
         footer_html = footer_template.render(**metadata)
 
+    # Process title page template
+    title_page_html = ""
+    if config.title_page.enabled and config.title_page.content:
+        title_page_template = env.from_string(config.title_page.content)
+        title_page_html = title_page_template.render(**metadata)
+
     # Generate stylesheet
-    stylesheet = generate_stylesheet(config)
+    has_title_page = bool(config.title_page.enabled and config.title_page.content)
+    stylesheet = generate_stylesheet(config, has_title_page=has_title_page)
 
     # Build header/footer divs - these are pulled into frames by -pdf-frame-content
     header_div = f'<div id="header_div">{header_html}</div>' if header_html else ""
     footer_div = f'<div id="footer_div">{footer_html}</div>' if footer_html else ""
+
+    # Build title page div
+    title_page_div = f'<div id="title-page">{title_page_html}</div>' if title_page_html else ""
 
     # Build document
     document = f"""<!DOCTYPE html>
@@ -58,6 +68,7 @@ def build_html_document(
 <body>
     {header_div}
     {footer_div}
+    {title_page_div}
     {body_content}
 </body>
 </html>"""
@@ -86,15 +97,59 @@ def _convert_page_placeholders(content: str) -> str:
     return content
 
 
-def generate_stylesheet(config: Config) -> str:
-    """Generate CSS stylesheet for xhtml2pdf.
+def _generate_font_face_css(config: Config) -> str:
+    """Generate @font-face CSS rules for custom fonts.
 
     Args:
         config: Configuration object.
 
     Returns:
+        CSS string with @font-face declarations.
+    """
+    if not config.fonts:
+        return ""
+
+    font_faces = []
+    for font in config.fonts:
+        if font.family and font.src:
+            font_faces.append(f"""@font-face {{
+    font-family: "{font.family}";
+    src: url("{font.src}");
+    font-weight: {font.weight};
+    font-style: {font.style};
+}}""")
+
+    return "\n".join(font_faces) + "\n" if font_faces else ""
+
+
+def generate_stylesheet(config: Config, has_title_page: bool = False) -> str:
+    """Generate CSS stylesheet for xhtml2pdf.
+
+    Args:
+        config: Configuration object.
+        has_title_page: Whether the document has a title page.
+
+    Returns:
         CSS stylesheet string.
     """
+    # Generate @font-face rules for custom fonts
+    font_face_css = _generate_font_face_css(config)
+
+    # Add named page rule to hide header/footer on title page
+    title_page_css = ""
+    if has_title_page:
+        title_page_css = f"""
+@page titlepage {{
+    size: {config.page_size};
+    margin: {config.margins.top} {config.margins.right} {config.margins.bottom} {config.margins.left};
+}}
+
+#title-page {{
+    page: titlepage;
+    page-break-after: always;
+}}
+"""
+
     css = f"""
 @page {{
     size: {config.page_size};
@@ -237,4 +292,4 @@ hr {{
 }}
 """
 
-    return css
+    return font_face_css + css + title_page_css

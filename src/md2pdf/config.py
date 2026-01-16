@@ -20,10 +20,20 @@ class MarginsConfig:
 
 
 @dataclass
+class FontFace:
+    """Custom font-face registration."""
+
+    family: str = ""
+    src: str = ""  # Path to font file (TTF, OTF)
+    weight: str = "normal"  # normal, bold, 100-900
+    style: str = "normal"  # normal, italic
+
+
+@dataclass
 class FontConfig:
     """Font configuration."""
 
-    family: str = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+    family: str = "Helvetica, Arial, sans-serif"
     size: str = "11pt"
     line_height: float = 1.5
 
@@ -37,14 +47,24 @@ class HeaderFooterConfig:
 
 
 @dataclass
+class TitlePageConfig:
+    """Title page configuration."""
+
+    enabled: bool = False
+    content: str = ""
+
+
+@dataclass
 class Config:
     """Complete md2pdf configuration."""
 
     font: FontConfig = field(default_factory=FontConfig)
+    fonts: list[FontFace] = field(default_factory=list)
     margins: MarginsConfig = field(default_factory=MarginsConfig)
     page_size: str = "A4"
     header: HeaderFooterConfig = field(default_factory=HeaderFooterConfig)
     footer: HeaderFooterConfig = field(default_factory=HeaderFooterConfig)
+    title_page: TitlePageConfig = field(default_factory=TitlePageConfig)
 
 
 def find_config(input_file: Path) -> Path | None:
@@ -131,5 +151,23 @@ def merge_config(user_config: dict[str, Any]) -> Config:
             content=footer_data.get("content", ""),
             height=footer_data.get("height", "1.5cm"),
         )
+
+    if "title_page" in user_config:
+        title_page_data = user_config["title_page"]
+        config.title_page = TitlePageConfig(
+            enabled=title_page_data.get("enabled", False),
+            content=title_page_data.get("content", ""),
+        )
+
+    if "fonts" in user_config:
+        config.fonts = [
+            FontFace(
+                family=font.get("family", ""),
+                src=font.get("src", ""),
+                weight=font.get("weight", "normal"),
+                style=font.get("style", "normal"),
+            )
+            for font in user_config["fonts"]
+        ]
 
     return config

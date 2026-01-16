@@ -38,7 +38,10 @@ def convert_markdown_to_pdf(
     metadata = extract_metadata(input_file, markdown_content)
 
     # Convert Markdown to HTML
-    md = markdown.Markdown(output_format="html5")
+    md = markdown.Markdown(
+        output_format="html5",
+        extensions=["tables", "fenced_code", "md_in_html"],
+    )
     html_body = md.convert(markdown_content)
 
     # Build complete HTML document with embedded CSS

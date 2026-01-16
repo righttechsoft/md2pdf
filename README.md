@@ -39,9 +39,20 @@ Create a `md2pdf.yaml` file to customize styling. The tool searches for config i
 ### Example Configuration
 
 ```yaml
+# Custom fonts (register TTF/OTF files)
+fonts:
+  - family: "Gilroy"
+    src: "gilroy-light.ttf"
+    weight: "normal"
+    style: "normal"
+  - family: "Gilroy"
+    src: "gilroy-bold.ttf"
+    weight: "bold"
+    style: "normal"
+
 # Font settings
 font:
-  family: "Georgia, serif"
+  family: "Gilroy, sans-serif"
   size: "12pt"
   line_height: 1.6
 
@@ -55,7 +66,17 @@ margins:
 # Page size: A4, Letter, Legal
 page_size: "A4"
 
-# Header (appears on every page)
+# Title page (optional, no header/footer on this page)
+title_page:
+  enabled: true
+  content: |
+    <div style="text-align: center; padding-top: 4cm;">
+      <img src="logo.png" style="width: 6cm; margin-bottom: 3cm;" />
+      <h1 style="font-size: 32pt;">{{title}}</h1>
+      <p style="font-size: 14pt; color: #666; margin-top: 2cm;">{{date}}</p>
+    </div>
+
+# Header (appears on every page except title page)
 header:
   height: "2cm"
   content: |
@@ -67,7 +88,7 @@ header:
       </tr>
     </table>
 
-# Footer (appears on every page)
+# Footer (appears on every page except title page)
 footer:
   height: "1.5cm"
   content: |
@@ -85,6 +106,27 @@ footer:
 - **Margins must accommodate header/footer**: If using a 2cm header, set top margin to at least 3-4cm
 - **Use tables for layout**: xhtml2pdf works best with `<table>` layouts instead of CSS flexbox
 - **Images**: Place image files in the same directory as the markdown file
+- **Custom fonts**: Use `fonts` to register TTF/OTF files, then reference in `font.family`
+
+### Page Break Control
+
+Force a page break in your Markdown:
+
+```html
+<div style="page-break-before: always;"></div>
+```
+
+Keep content together (prevent splitting across pages):
+
+```html
+<div style="page-break-inside: avoid;" markdown="1">
+
+Your content here...
+
+</div>
+```
+
+Note: Use `markdown="1"` attribute to enable Markdown processing inside HTML blocks.
 
 ### Available Placeholders
 

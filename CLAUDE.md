@@ -40,6 +40,12 @@ CLI (cli.py) → Config (config.py) → Converter (converter.py) → Templates (
 
 ## Config Schema
 ```yaml
+fonts:              # Custom font registration (list)
+  - family: string  # Font family name
+    src: string     # Path to TTF/OTF file
+    weight: string  # "normal" or "bold"
+    style: string   # "normal" or "italic"
+
 font:
   family: string    # CSS font-family
   size: string      # CSS font-size (e.g., "12pt")
@@ -52,6 +58,10 @@ margins:
   right: string
 
 page_size: string   # "A4", "Letter", or "Legal"
+
+title_page:
+  enabled: bool     # Enable title page (default: false)
+  content: string   # HTML with Jinja2 placeholders
 
 header:
   height: string    # CSS length (e.g., "2cm")
@@ -81,6 +91,19 @@ Example: For a 2cm header, set top margin to at least 3-4cm.
 - Header/footer content placed in divs with IDs referenced by `-pdf-frame-content`
 - **Use `<table>` for header/footer layouts** - flexbox doesn't work well
 - Source divs hidden with `position: absolute; top: -1000pt`
+- Title page uses named page (`@page titlepage`) to hide header/footer
+- Custom fonts registered via `@font-face` CSS rules
+- Font weights: only "normal" and "bold" supported (not numeric values)
+
+## Markdown Extensions
+The converter uses these Python-Markdown extensions:
+- `tables` - GitHub-style tables
+- `fenced_code` - Fenced code blocks with ``` syntax
+- `md_in_html` - Process Markdown inside HTML blocks (requires `markdown="1"` attribute)
+
+## Page Break Control in Markdown
+- Force page break: `<div style="page-break-before: always;"></div>`
+- Keep content together: `<div style="page-break-inside: avoid;" markdown="1">...</div>`
 
 ## Coding Conventions
 - Use type hints (Python 3.9+ syntax: `list[str]`, `dict[str, Any]`, `X | None`)

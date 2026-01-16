@@ -1,15 +1,27 @@
 # md2pdf Configuration File
 # All values are optional - defaults will be used if not specified
 
+# Custom font registration (required for non-system fonts)
+fonts:
+  - family: "Gilroy"
+    src: "gilroy-light.ttf"
+    weight: "normal"
+    style: "normal"
+  # Add more font variants as needed:
+  # - family: "Gilroy"
+  #   src: "gilroy-bold.ttf"
+  #   weight: "bold"
+  #   style: "normal"
+
 # Font settings
 font:
-  family: "Georgia, serif"
+  family: "Gilroy, sans-serif"
   size: "12pt"
-  line_height: 1.6
+  line_height: 1.2
 
 # Page margins (CSS length units: cm, mm, in, pt, px)
 margins:
-  top: "4cm"
+  top: "1cm"
   bottom: "1.5cm"
   left: "1.5cm"
   right: "1.5cm"
@@ -18,16 +30,17 @@ margins:
 page_size: "A4"
 
 # Header configuration
-header:
-  height: "2cm"
-  content: |
-    <table style="width: 100%; border: none;">
-      <tr>
-        <td style="text-align: left; border: none;"><img src="logo.png" style="height: 1.2cm;" /></td>
-        <td style="text-align: center; font-size: 10pt; color: #666; border: none;">{{title}}</td>
-        <td style="text-align: right; font-size: 9pt; color: #888; border: none;">{{date}}</td>
-      </tr>
-    </table>
+#header:
+#  height: "2cm"
+#  content: |
+#    <table style="width: 100%; border: none;">
+#      <tr>
+#        <td style="text-align: left; border: none;"><img src="logo.png" style="height: 1.2cm;" /></td>
+#        <td style="text-align: center; font-size: 10pt; color: #666; border: none;">{{title}}</td>
+#        <td style="text-align: right; font-size: 9pt; color: #888; border: none;">{{date}}</td>
+#      </tr>
+#    </table>
+
 
 # Footer configuration
 footer:
@@ -35,8 +48,18 @@ footer:
   content: |
     <table style="width: 100%; border: none;">
       <tr>
-        <td style="text-align: left; font-size: 8pt; color: #999; border: none;">{{filename}}</td>
-        <td style="text-align: center; font-size: 9pt; color: #666; border: none;">Page <span class="page-number"></span> of <span class="page-count"></span></td>
+        <td style="text-align: left; font-size: 9pt; color: #666; border: none;">Page <span class="page-number"></span> of <span class="page-count"></span></td>
         <td style="text-align: right; border: none;"><img src="logo.png" style="height: 0.8cm;" /></td>
       </tr>
     </table>
+
+# Title page configuration (optional)
+title_page:
+  enabled: true
+  content: |
+    <div style="text-align: center; padding-top: 4cm;">
+      <img src="logo.png" style="width: 6cm; margin-bottom: 3cm;" />
+      <h1 style="font-size: 32pt; font-weight: bold; color: #1a1a1a; margin: 0 0 0.5cm 0;">{{title}}</h1>
+      <div style="width: 8cm; height: 2px; background-color: #0066cc; margin: 1cm auto;"></div>
+      <p style="font-size: 14pt; color: #666; margin-top: 2cm;">{{date}}</p>
+    </div>
