@@ -40,7 +40,8 @@ def convert_markdown_to_pdf(
     # Convert Markdown to HTML
     md = markdown.Markdown(
         output_format="html5",
-        extensions=["tables", "fenced_code", "md_in_html"],
+        extensions=["tables", "fenced_code", "md_in_html", "sane_lists"],
+        tab_length=2,  # Allow 2-space indentation for nested lists
     )
     html_body = md.convert(markdown_content)
 

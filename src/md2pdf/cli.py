@@ -2,10 +2,23 @@
 
 from __future__ import annotations
 
+import os
+import platform
+import subprocess
 import sys
 from pathlib import Path
 
 import click
+
+
+def open_file(filepath: Path) -> None:
+    """Open a file with the default system application."""
+    if platform.system() == "Windows":
+        os.startfile(filepath)
+    elif platform.system() == "Darwin":
+        subprocess.run(["open", filepath])
+    else:
+        subprocess.run(["xdg-open", filepath])
 
 from md2pdf import __version__
 from md2pdf.config import find_config, load_config
@@ -41,6 +54,12 @@ from md2pdf.converter import convert_markdown_to_pdf
     is_flag=True,
     help="Enable verbose output.",
 )
+@click.option(
+    "--open",
+    "open_after",
+    is_flag=True,
+    help="Open the PDF file after creation.",
+)
 @click.version_option(version=__version__, prog_name="md2pdf")
 def main(
     input_file: Path,
@@ -48,6 +67,7 @@ def main(
     config_path: Path | None,
     no_config: bool,
     verbose: bool,
+    open_after: bool,
 ) -> None:
     """Convert a Markdown file to PDF.
 
@@ -89,6 +109,8 @@ def main(
             click.echo(f"Converting: {input_file}")
         convert_markdown_to_pdf(input_file, output, config_data, verbose=verbose)
         click.echo(f"Created: {output}")
+        if open_after:
+            open_file(output)
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
         sys.exit(1)
